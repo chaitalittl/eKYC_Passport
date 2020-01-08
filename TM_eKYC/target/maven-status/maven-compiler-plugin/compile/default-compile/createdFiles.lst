@@ -1,0 +1,17 @@
+passport\tml\service\OTPRequestObject.class
+passport\tml\service\ResultObject.class
+org\example\passport\Passport.class
+org\mycompany\Application.class
+org\example\passport\NewOperation.class
+passport\tml\service\NameObject.class
+org\example\passport\package-info.class
+passport\tml\service\DataPortWS.class
+org\example\passport\NewOperationResponse.class
+passport\tml\service\DateOfIssueObject.class
+passport\tml\service\package-info.class
+org\example\passport\Passport_Service.class
+passport\tml\service\DataPortWS_Service.class
+passport\tml\service\ObjectFactory.class
+org\example\passport\ObjectFactory.class
+passport\tml\service\OTPResponseObject.class
+passport\tml\service\PassportNumberObject.class

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="          http://www.springframework.org/schema/beans           http://www.springframework.org/schema/beans/spring-beans.xsd            http://camel.apache.org/schema/cxf           http://camel.apache.org/schema/cxf/camel-cxf.xsd                http://camel.apache.org/schema/spring                 http://camel.apache.org/schema/spring/camel-spring.xsd                http://cxf.apache.org/transports/http/configuration     http://cxf.apache.org/schemas/configuration/http-conf.xsd">
+    <cxf:cxfEndpoint address="http://0.0.0.0:8099/ReqPassRoute"
+        id="eKYCReqPass" serviceClass="passport.tml.service.DataPortWS" wsdlURL="Passport.wsdl">
+        <cxf:properties>
+            <entry key="dataFormat" value="MESSAGE"/>
+        </cxf:properties>
+    </cxf:cxfEndpoint>
+    <cxf:rsClient
+        address="https://testapi.karza.in/v3/passport-verification"
+        id="rsPassAPI" loggingFeatureEnabled="true"/>
+    <camelContext id="camel" streamCache="true"
+        xmlns="http://camel.apache.org/schema/spring" xmlns:ser="http://service.TML.passport/">
+        <propertyPlaceholder id="properties" location="application-local-esb.properties"/>
+        <route id="eKYCReqPass" xmlns="http://camel.apache.org/schema/spring">
+            <from id="_from1" uri="cxf:bean:eKYCReqPass"/>
+            <doTry id="_doTry1">
+                <log id="_log1" message="Request Received from CRM____${body}"/>
+                <setHeader headerName="Content-Type" id="_setHeader4">
+                    <constant>application/json</constant>
+                </setHeader>
+                <setHeader headerName="x-karza-key" id="_setHeader5">
+                    <constant>9qvf2X7URXTSfuvficjh</constant>
+                </setHeader>
+                <log id="_log1" message="after setting constant headers____${header.x-karza-key}"/>
+                <setHeader headerName="consent" id="_setHeader1">
+                    <xpath resultType="java.lang.String">//ser:OTPRequest/consent/text()</xpath>
+                </setHeader>
+                <log id="_log1" message="after setting constant headers____${header.x-karza-key}"/>
+                <setHeader headerName="fileNo" id="_setHeader1">
+                    <xpath resultType="java.lang.String">//ser:OTPRequest/fileNo/text()</xpath>
+                </setHeader>
+                <log id="_log1" message="after setting fileNo____${header.fileNo}"/>
+                <setHeader headerName="dob" id="_setHeader2">
+                    <xpath>//ser:OTPRequest/dob/text()</xpath>
+                </setHeader>
+                <log id="_log1" message="after setting dob____${header.dob}"/>
+                <setHeader headerName="passportNo" id="_setHeader2">
+                    <xpath>//ser:OTPRequest/passportNo/text()</xpath>
+                </setHeader>
+                <log id="_log1" message="after setting passportno____${header.passportNo}"/>
+                <setHeader headerName="doi" id="_setHeader2">
+                    <xpath>//ser:OTPRequest/doi/text()</xpath>
+                </setHeader>
+                <log id="_log1" message="after setting doi____${header.doi}"/>
+                <setHeader headerName="name" id="_setHeader2">
+                    <xpath>//ser:OTPRequest/name/text()</xpath>
+                </setHeader>
+                <setBody id="_setBody1">
+                    <simple>{"consent":"${header.consent}", "fileNo":"${header.fileNo}", "dob":"${header.dob}", "passportNo":"${header.passportNo}", "doi":"${header.doi}", "name":"${header.name}"}</simple>
+                </setBody>
+                <to id="_to2" pattern="InOut" uri="cxfrs:bean:rsPassAPI?throwExceptionOnFailure=false"/>
+                <log id="_log2" message="Response send to CRM_______ ${body}"/>
+                <choice id="_choice1">
+                    <when id="_when1">
+                        <simple>${header.CamelHttpResponseCode} == '200'</simple>
+                        <setHeader headerName="request_id" id="_setHeader6">
+                            <jsonpath>$.requestId</jsonpath>
+                        </setHeader>
+                        <log id="_log5" message="Header Result_${header.request_id}"/>
+                        <setHeader headerName="result" id="_setHeader7">
+                            <jsonpath>$.result</jsonpath>
+                        </setHeader>
+                        <log id="_log6" message="Header Result_${header.result}"/>
+                        <setHeader headerName="status-code" id="_setHeader8">
+                            <jsonpath>$.statusCode</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.status-code}"/>
+                        <setHeader headerName="application_Date" id="_setHeader8">
+                            <jsonpath>$.result.applicationDate</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.application_Date}"/>
+                        <setHeader headerName="dispatched_OnFromSource" id="_setHeader8">
+                            <jsonpath>$.result.dateOfIssue.dispatchedOnFromSource</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.dispatched_OnFromSource}"/>
+                        <setHeader headerName="dispatched_OnFromSource" id="_setHeader8">
+                            <jsonpath>$.result.dateOfIssue.dispatchedOnFromSource</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.dispatched_OnFromSource}"/>
+                        <setHeader headerName="dateOfIssue_Match" id="_setHeader8">
+                            <jsonpath>$.result.dateOfIssue.dateOfIssueMatch</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.dateOfIssue_Match}"/>
+                        <setHeader
+                            headerName="passportNumber_FromSource" id="_setHeader8">
+                            <jsonpath>$.result.passportNumber.passportNumberFromSource</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.passportNumber_FromSource}"/>
+                        <setHeader headerName="passportNumber_Match" id="_setHeader8">
+                            <jsonpath>$.result.passportNumber.passportNumberMatch</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.passportNumber_Match}"/>
+                        <setHeader headerName="name_Match" id="_setHeader8">
+                            <jsonpath>$.result.name.nameMatch</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.name_Match}"/>
+                        <setHeader headerName="surname_FromPassport" id="_setHeader8">
+                            <jsonpath>$.result.name.surnameFromPassport</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.surname_FromPassport}"/>
+                        <setHeader headerName="name_Score" id="_setHeader8">
+                            <jsonpath>$.result.name.nameScore</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.name_Score}"/>
+                        <setHeader headerName="name_FromPassport" id="_setHeader8">
+                            <jsonpath>$.result.name.nameFromPassport</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.name_FromPassport}"/>
+                        <setHeader headerName="type_OfApplication" id="_setHeader8">
+                            <jsonpath>$.result.typeOfApplication</jsonpath>
+                        </setHeader>
+                        <log id="_log7" message="Header Result_${header.type_OfApplication}"/>
+                    </when>
+                </choice>
+                <setBody id="_setBody2">
+                    <simple>&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tml="http://service.TML.eKYC/"&gt;
+						   &lt;soapenv:Header/&gt;
+						   &lt;soapenv:Body&gt;
+						      &lt;ser:OTPResponse&gt;
+						         &lt;PASSPORT&gt;
+						         	&lt;statusCode&gt;${header.status-code}&lt;/statusCode&gt;
+									&lt;requestId&gt;${header.request_id}&lt;/requestId&gt;
+									&lt;result&gt;
+									&lt;applicationDate&gt;${header.application_Date}&lt;/applicationDate&gt;
+									&lt;dateOfIssue&gt;
+									&lt;dispatchedOnFromSource&gt;${header.dispatched_OnFromSource}&lt;/dispatchedOnFromSource&gt;
+									&lt;dateOfIssueMatch&gt;${header.dateOfIssue_Match}&lt;/dateOfIssueMatch&gt;
+									&lt;/dateOfIssue&gt;
+									&lt;passportNumber&gt;
+									&lt;passportNumberFromSource&gt;${header.passportNumber_FromSource}&lt;/passportNumberFromSource&gt;
+									&lt;passportNumberMatch&gt;${header.passportNumber_Match}&lt;/passportNumberMatch&gt;
+									&lt;/passportNumber&gt;
+									&lt;name&gt;
+									&lt;nameMatch&gt;${header.name_Match}&lt;/nameMatch&gt;
+									&lt;surnameFromPassport&gt;${header.surname_FromPassport}&lt;/surnameFromPassport&gt;
+									&lt;nameScore&gt;${header.name_Score}&lt;/nameScore&gt;
+									&lt;nameFromPassport&gt;${header.name_FromPassport}&lt;/nameFromPassport&gt;
+									&lt;/name&gt;
+									&lt;typeOfApplication&gt;${header.type_OfApplication}&lt;/typeOfApplication&gt;
+									&lt;/result&gt;
+									&lt;/PASSPORT&gt;
+						      &lt;/ser:OTPResponse&gt;
+						   &lt;/soapenv:Body&gt;
+						&lt;/soapenv:Envelope&gt;
+				</simple>
+                </setBody>
+            </doTry>
+        </route>
+    </camelContext>
+</beans>

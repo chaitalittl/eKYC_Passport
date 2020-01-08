@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://service.TML.passport/" targetNamespace="http://service.TML.passport/" name="dataPortWS">
+  <types>
+		<xs:schema xmlns:tns="http://service.TML.passport/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://service.TML.passport/">
+      <xs:element name="OTPRequest" type="tns:OTPRequestObject"/>
+	  <xs:element name="OTPResponse" type="tns:OTPResponseObject" />
+	  <xs:complexType name="OTPRequestObject">
+			<xs:sequence>
+				<xs:element name="docType" type="xs:string" minOccurs="0" />
+				<xs:element name="consent" type="xs:string" minOccurs="0" />
+				<xs:element name="fileNo" type="xs:string" minOccurs="0" />
+				<xs:element name="dob" type="xs:string" minOccurs="0" />
+				<xs:element name="passportNo" type="xs:string" minOccurs="0" />
+				<xs:element name="doi" type="xs:string" minOccurs="0" />
+				<xs:element name="name" type="xs:string" minOccurs="0" />
+			</xs:sequence>
+        </xs:complexType>
+		<xs:complexType name="OTPResponseObject">
+			<xs:sequence>
+			     <xs:element name="statusCode" type="xs:string" minOccurs="0" />
+				  <xs:element name="requestId" type="xs:string" minOccurs="0" />
+                <xs:element name="result" type="tns:resultObject" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+		<xs:complexType name="resultObject">
+			<xs:sequence>
+				<xs:element name="applicationDate" type="xs:string" minOccurs="0" />
+				<xs:element name="dateOfIssue" type="tns:dateOfIssueObject" minOccurs="0" />
+				<xs:element name="passportNumber" type="tns:passportNumberObject" minOccurs="0" />
+				<xs:element name="name" type="tns:nameObject" minOccurs="0" />
+				<xs:element name="typeOfApplication" type="xs:string" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="dateOfIssueObject">
+			<xs:sequence>
+				<xs:element name="dispatchedOnFromSource" type="xs:string" minOccurs="0" />
+				<xs:element name="dateOfIssueMatch" type="xs:string" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="passportNumberObject">
+			<xs:sequence>
+				<xs:element name="passportNumberFromSource" type="xs:string" minOccurs="0" />
+				<xs:element name="passportNumberMatch" type="xs:string" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="nameObject">
+			<xs:sequence>
+				<xs:element name="nameMatch" type="xs:string" minOccurs="0" />
+				<xs:element name="surnameFromPassport" type="xs:string" minOccurs="0" />
+				<xs:element name="nameScore" type="xs:string" minOccurs="0" />
+				<xs:element name="nameFromPassport" type="xs:string" minOccurs="0" />
+			</xs:sequence>
+		</xs:complexType>
+    </xs:schema>
+  </types>  
+  <message name="OTPRequest">
+        <part name="parameters" element="tns:OTPRequest" />
+    </message>
+	 <message name="OTPResponse">
+        <part name="parameters" element="tns:OTPResponse" />
+    </message>	
+	<portType name="dataPortWS">
+        <operation name="OTPRequest">
+            <input  message="tns:OTPRequest" />
+            <output message="tns:OTPResponse" />
+        </operation>
+    </portType>	
+	<binding name="dataPortWSPortBinding" type="tns:dataPortWS">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+        <operation name="OTPRequest">
+            <soap:operation soapAction="" />
+            <input>
+                <soap:body use="literal" />
+            </input>
+            <output>
+                <soap:body use="literal" />
+            </output>
+        </operation>
+    </binding>
+	
+	<service name="dataPortWS">
+        <port name="dataPortwsPort" binding="tns:dataPortWSPortBinding">
+            <soap:address location="http://0.0.0.0:8099/ReqPassRoute" />
+        </port>
+    </service>
+  </definitions>
